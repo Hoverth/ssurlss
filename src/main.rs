@@ -42,7 +42,7 @@ fn main() {
     let mut config: Config = Config { 
         host: String::from("http://localhost:8000"),
         url_path: String::from(""), 
-        link_path: String::from("l"),
+        link_path: String::from("links"),
         port: 8000,
         entries: HashMap::new(), // parse in from toml or something,
         entries_len: 0,
@@ -107,7 +107,7 @@ fn main() {
                 let url = full_url.strip_prefix(&prefix).unwrap();
                 let prefix = config.link_path.clone() + "/";
                 
-                if url == "favicon.ico" {
+                if url.contains("favicon.ico") {
                     println!("200 Favicon {full_url:?}");
                     file_resp(include_bytes!("../assets/favicon.ico"), request);
                 } else if url.starts_with(&prefix) {
