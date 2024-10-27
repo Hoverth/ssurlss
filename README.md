@@ -2,7 +2,9 @@
 
 ##### super simple URL shortener service
 
-A very hacky, but very lightweight URL shortener.
+![logo](./assets/favicon.png) 
+
+A very lightweight URL shortener.
 
 ## License
 

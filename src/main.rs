@@ -5,15 +5,16 @@ use std::{
     io::{ Cursor, Write },
     time::SystemTime 
 };
-use html_escape::decode_html_entities;
 use serde::{ Deserialize, Serialize };
 use random_string::generate;
 use tiny_http::{ Header, Server, StatusCode, Response, Request };
+use urlencoding::decode;
 
 const LETTERS: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Config {
+    host: String,
     url_path: String,
     link_path: String,
     port: u16,
@@ -39,6 +40,7 @@ struct Entry {
 fn main() {  
     // Default Config 
     let mut config: Config = Config { 
+        host: String::from("http://localhost:8000"),
         url_path: String::from(""), 
         link_path: String::from("l"),
         port: 8000,
@@ -62,6 +64,7 @@ fn main() {
     println!("Reading environment variables...");
     for (key, value) in std::env::vars() {
         match key.as_str() {
+            "HOST" => { config.host = value },
             "URLPATH" => { config.url_path = value },
             "LINKPATH" => { config.link_path = value.trim_matches(['/']).to_string() },
             "PORT" => { config.port = value.parse().unwrap_or(config.port) },
@@ -130,14 +133,27 @@ fn main() {
                     if url.contains('?') { // receiving data to add 
                         let data = url.strip_prefix("add?").unwrap();
                         let entry = process_entry(&config, data);
+
+                        if entry.url.is_empty() {
+                            println!("200 Add (data malformed) {full_url:?}");
+                            let r = html_resp_incl(include_str!("add.html"));
+                            let _ = request.respond(r);
+                            continue;
+                        }
     
                         let name = entry.id.clone();
-                        let _ = config.entries.insert(name, entry);
+                        let _ = config.entries.insert(name.clone(), entry);
                         config.entries_len += 1;
-                        write_config(&config);
-    
                         println!("200 Add (data) {full_url:?}");
-                        let r = Response::from_string("Added successfully!");
+    
+                        write_config(&config);
+                        let template = include_str!("added.html");
+                        let complete_url = if !config.url_path.is_empty() {
+                            format!("{}/{}/{}/{}",config.host.clone(), &config.url_path, &config.link_path, &name)
+                        } else {
+                            format!("{}/{}/{}",config.host.clone(), &config.link_path, &name)
+                        };
+                        let r = html_resp_incl(&template.replace("{url}", &complete_url));
                         let _ = request.respond(r);
                     } else { // give the normal add page
                         println!("200 Add (page) {full_url:?}");
@@ -162,12 +178,16 @@ fn process_entry(config: &Config, data: &str) -> Entry {
 
     let data = data.split("&").map(|x| {
         let y = x.split("=").collect::<Vec<_>>(); 
-        (y[0], y[1]) 
+        if y.len() >= 2 {
+            (y[0], y[1]) 
+        } else {("", "")}
     }).collect::<Vec<_>>();
 
     for (key, val) in &data {
         match *key {
-            "url" => { entry.url = decode_html_entities(val).to_string() },
+            "url" => { if !val.is_empty() {
+                if let Ok(url) = decode(val) { entry.url = url.into_owned() }
+            }},
             "id" => { 
                 let val = val.to_string();
                 if !config.entries.contains_key(&val) && !val.is_empty() {

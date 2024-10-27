@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Adding link</title>
+  </head>
+  <body>
+    <form>
+      <img src="favicon.ico" alt="logo">
+      <h2>Adding a URL entry</h2>
+      <p>Added entry successfully as <a href="{url}">{url}</a> <button type="button" onclick="copy()">Copy to clipboard</button></p>
+    </form>
+    <script>
+    function copy() {
+      navigator.clipboard.writeText("{url}");
+    }
+    </script> 
+  </body>
+</html>
+
