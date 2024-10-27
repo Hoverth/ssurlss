@@ -111,7 +111,6 @@ fn main() {
                 if url.contains("favicon.ico") {
                     file_resp(include_bytes!("../assets/favicon.ico"), request);
                 } else if url.starts_with(&link_prefix) {
-                    println!("hit link!");
                     // hit a shortened url!
                     let key = url.strip_prefix(&link_prefix).unwrap();
                     if let Some(entry) = config.entries.get(key) {
