@@ -8,4 +8,5 @@ FROM debian
 COPY --from=builder /usr/local/cargo/bin/ssurlss /ssurlss
 RUN chmod +x /ssurlss
 WORKDIR /
+RUN touch /ssurlss.toml
 CMD ["/ssurlss"]
