@@ -97,22 +97,23 @@ fn main() {
             );
             
             let full_url = request.url();
-            let prefix = String::from("/") + &config.url_path;
+            let prefix_no_trail = String::from("/") + &config.url_path;
+            let prefix = String::from("/") + &config.url_path + "/";
             
-            if full_url == prefix || full_url == prefix.clone() + "/" {
+            if full_url == prefix || full_url == prefix_no_trail {
                 println!("200 Index {full_url:?}");
                 let r = html_resp_incl(include_str!("index.html"));
                 let _ = request.respond(r);
             } else if full_url.starts_with(&prefix) {
                 let url = full_url.strip_prefix(&prefix).unwrap();
-                let prefix = config.link_path.clone() + "/";
+                let link_prefix = config.link_path.clone() + "/";
                 
                 if url.contains("favicon.ico") {
-                    println!("200 Favicon {full_url:?}");
                     file_resp(include_bytes!("../assets/favicon.ico"), request);
-                } else if url.starts_with(&prefix) {
+                } else if url.starts_with(&link_prefix) {
+                    println!("hit link!");
                     // hit a shortened url!
-                    let key = url.strip_prefix(&prefix).unwrap();
+                    let key = url.strip_prefix(&link_prefix).unwrap();
                     if let Some(entry) = config.entries.get(key) {
                         let to = entry.url.clone();
                         if let Some(delete_time) = entry.delete {
