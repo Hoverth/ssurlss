@@ -1,0 +1,7 @@
+services:
+  ssurlss:
+    build: . 
+    ports:
+      - "8000:8000"
+    volumes:
+      - "${PWD}/ssurlss.toml:/ssurlss.toml"
