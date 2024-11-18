@@ -2,7 +2,7 @@
 
 ##### super simple URL shortener service
 
-![logo](./assets/favicon.png) 
+![logo](./assets/favicon.png)
 
 A very lightweight URL shortener.
 
@@ -14,7 +14,9 @@ You can use ssurlss standalone by manually compiling & installing it in a direct
 
 ### Docker
 
-You can build the docker image using supplied `docker-compose.yml` using `docker-compose up` in a clone of this repo, or change the `build: .` to `build: https://github.com/Hoverth/ssurlss.git` to keep your directory clean.
+You can build the docker image using supplied `docker-compose.yml` using `docker-compose up` in a clone of this repo.
+
+To use a specific release, change the `build: .` to `build: https://github.com/Hoverth/ssurlss.git#v1.1.0` (just change the `v1.1.0` to whatever [release](https://github.com/Hoverth/ssurlss/releases) you want to target).
 
 ## Configuration
 
@@ -28,7 +30,6 @@ The following list is formatted as: `- toml_name (ENVNAME, default value) Notes`
 - port (PORT, `8000`) The port for the server to listen on, if using in docker just set the mapped port in the `docker-compose.yml`
 - allow_new (ALLOWNEW/DISALLOWNEW, `true`) Setting either envvar to 1 will set the relevant value in the config.
 - entries_len (no envvar, `0`) A helpful tracking value for admin purposes, no environment variable and not used anywhere (write-only).
-
 
 ## License
 
