@@ -1,4 +1,10 @@
+name: Publish Releases from Cargo.toml
+
 on:
+  push:
+    branches: [main]
+
+jobs:
   release:
     runs-on: ubuntu-latest
     steps:
