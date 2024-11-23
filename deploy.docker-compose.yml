@@ -1,0 +1,14 @@
+services:
+  ssurlss:
+    image: ghcr.io/hoverth/ssurlss:main
+    ports:
+      - "8000:8000"
+    volumes:
+      - "${PWD}/ssurlss.toml:/ssurlss.toml"
+    environment:
+      HOST: http://localhost:8000
+      #URLPATH: ""
+      LINKPATH: "links"
+      PORT: 8000
+      ALLOWNEW: 1
+      #DISALLOWNEW: 1
